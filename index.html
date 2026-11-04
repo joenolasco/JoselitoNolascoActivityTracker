@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Joselito Nolasco Activity Tracker</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --warning-bg: #fef3c7;
+            --warning-text: #92400e;
+            --neutral-bg: #f1f5f9;
+            --neutral-text: #475569;
+            --danger-bg: #fee2e2;
+            --danger-text: #991b1b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            color: var(--text-main);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.secondary {
+            background-color: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        button.secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        button.success {
+            background-color: #22c55e;
+        }
+
+        button.success:hover {
+            background-color: #16a34a;
+        }
+
+        button.purple {
+            background-color: #8b5cf6;
+        }
+
+        button.purple:hover {
+            background-color: #7c3aed;
+        }
+
+        button.indigo {
+            background-color: #6366f1;
+        }
+
+        button.indigo:hover {
+            background-color: #4f46e5;
+        }
+
+        button.teal {
+            background-color: #0d9488;
+        }
+
+        button.teal:hover {
+            background-color: #0f766e;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .progress-bar-container {
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            height: 10px;
+            width: 100%;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: #22c55e;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        [contenteditable="true"] {
+            outline: none;
+            border-bottom: 1px dashed transparent;
+            transition: border-color 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            border-bottom-color: var(--text-muted);
+        }
+
+        [contenteditable="true"]:focus {
+            border-bottom-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        select {
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        select.completed {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        select.in-progress {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        select.not-started {
+            background-color: var(--neutral-bg);
+            color: var(--neutral-text);
+        }
+
+        .pct-input {
+            width: 55px;
+            padding: 0.3rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .btn-delete:hover {
+            background-color: #fca5a5;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Notification Banner */
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 1rem;
+            position: fixed;
+            z-index: 2000;
+            right: 2rem;
+            bottom: 2rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div>
+                <h1>Joselito Nolasco Activity Tracker (Yearly Master Log)</h1>
+                <span class="hint">All tasks remain here permanently for your yearly history log.</span>
+            </div>
+            <div class="actions">
+                <button class="purple" onclick="generateReport('weekly')">📋 Weekly Report</button>
+                <button class="indigo" onclick="generateReport('monthly')">📊 Monthly Report</button>
+                <button class="teal" onclick="generateReport('yearly')">📈 Yearly Report</button>
+                <button onclick="addTask()">+ Add New Task</button>
+                <button class="secondary" onclick="resetData()">Reset Default</button>
+            </div>
+        </header>
+
+        <!-- Quick Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Tasks Logged</h3>
+                <div class="value" id="stat-total">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Not Started</h3>
+                <div class="value" id="stat-not-started" style="color: var(--neutral-text);">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>In Progress</h3>
+                <div class="value" id="stat-in-progress" style="color: var(--warning-text);">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <div class="value" id="stat-completed" style="color: var(--success-text);">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Yearly Overall Progress</h3>
+                <div class="value" id="stat-rate">0%</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Table -->
+        <div class="card">
+            <div class="card-header">Master Activity Log (All-Time)</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 22%;">Task / Project</th>
+                            <th style="width: 11%;">Category</th>
+                            <th style="width: 14%;">Status</th>
+                            <th style="width: 10%;">Progress</th>
+                            <th style="width: 11%;">Start Date</th>
+                            <th style="width: 11%;">Due Date</th>
+                            <th style="width: 15%;">Blocker / Remarks</th>
+                            <th style="width: 6%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-table-body">
+                        <!-- Rows populated via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Report copied to clipboard successfully!</div>
+
+    <script>
+        function getFormattedDate() {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            return new Date().toLocaleDateString('en-US', options);
+        }
+
+        // Your permanent default tasks list (contains your 6 items)
+        const defaultTasks = [
+            { task: "Review Code cloud-contact-center-ui", category: "General", status: "In Progress", progress: 10, startDate: "Oct 21, 2026", dueDate: "TBD", remarks: "Not started: awaiting email..." },
+            { task: "Create Documentation For cloud-contact-center-ui", category: "General", status: "In Progress", progress: 10, startDate: "Oct 21, 2026", dueDate: "TBD", remarks: "Not started: awaiting email..." },
+            { task: "Review Code cloud-contact-center-ui", category: "General", status: "In Progress", progress: 20, startDate: "Oct 22, 2026", dueDate: "TBD", remarks: "Pending..." },
+            { task: "Create Documentation For cloud-contact-center-ui", category: "General", status: "In Progress", progress: 20, startDate: "Oct 23, 2026", dueDate: "TBD", remarks: "Pending..." },
+            { task: "Review Code cloud-contact-center-ui", category: "General", status: "In Progress", progress: 30, startDate: "Oct 26, 2026", dueDate: "TBD", remarks: "Pending..." },
+            { task: "Create Documentation For cloud-contact-center-ui", category: "General", status: "In Progress", progress: 30, startDate: "Oct 26, 2026", dueDate: "TBD", remarks: "Pending..." }
+        ];
+
+        // Force-load check: if local storage is empty, initialize with defaultTasks
+        let trackerData = JSON.parse(localStorage.getItem('joselito_yearly_tracker'));
+        if (!trackerData || !trackerData.tasks || trackerData.tasks.length === 0) {
+            trackerData = { tasks: defaultTasks };
+            localStorage.setItem('joselito_yearly_tracker', JSON.stringify(trackerData));
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('joselito_yearly_tracker', JSON.stringify(trackerData));
+            renderTable();
+            updateStats();
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Completed') return 'completed';
+            if (status === 'In Progress') return 'in-progress';
+            return 'not-started';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('task-table-body');
+            tbody.innerHTML = '';
+
+            trackerData.tasks.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td contenteditable="true" onblur="updateTask(${index}, 'task', this.innerText)">${item.task}</td>
+                    <td contenteditable="true" onblur="updateTask(${index}, 'category', this.innerText)">${item.category}</td>
+                    <td>
+                        <select class="${getStatusClass(item.status)}" onchange="updateStatus(${index}, this.value)">
+                            <option value="Not Started" ${item.status === 'Not Started' ? 'selected' : ''}>Not Started</option>
+                            <option value="In Progress" ${item.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Completed" ${item.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" min="0" max="100" class="pct-input" value="${item.progress}" oninput="updateProgressNumber(${index}, this.value)">%
+                    </td>
+                    <td contenteditable="true" onblur="updateTask(${index}, 'startDate', this.innerText)">${item.startDate}</td>
+                    <td contenteditable="true" onblur="updateTask(${index}, 'dueDate', this.innerText)">${item.dueDate}</td>
+                    <td contenteditable="true" onblur="updateTask(${index}, 'remarks', this.innerText)">${item.remarks}</td>
+                    <td><button class="btn-delete" onclick="deleteTask(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateStats() {
+            const tasks = trackerData.tasks;
+            const total = tasks.length;
+            const notStarted = tasks.filter(t => t.status === 'Not Started').length;
+            const inProgress = tasks.filter(t => t.status === 'In Progress').length;
+            const completed = tasks.filter(t => t.status === 'Completed').length;
+            
+            let totalProgressSum = tasks.reduce((acc, t) => acc + Number(t.progress || 0), 0);
+            const overallRate = total > 0 ? Math.round(totalProgressSum / total) : 0;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-not-started').innerText = notStarted;
+            document.getElementById('stat-in-progress').innerText = inProgress;
+            document.getElementById('stat-completed').innerText = completed;
+            document.getElementById('stat-rate').innerText = overallRate + '%';
+            document.getElementById('progress-bar').style.width = overallRate + '%';
+        }
+
+        function updateTask(index, field, value) {
+            trackerData.tasks[index][field] = value.trim();
+            localStorage.setItem('joselito_yearly_tracker', JSON.stringify(trackerData));
+        }
+
+        function updateStatus(index, value) {
+            trackerData.tasks[index].status = value;
+            if (value === 'Completed') {
+                trackerData.tasks[index].progress = 100;
+            } else if (value === 'Not Started') {
+                trackerData.tasks[index].progress = 0;
+            }
+            saveAndRender();
+        }
+
+        function updateProgressNumber(index, value) {
+            let num = Math.max(0, Math.min(100, Number(value)));
+            trackerData.tasks[index].progress = num;
+            
+            if (num === 100) {
+                trackerData.tasks[index].status = 'Completed';
+            } else if (num === 0) {
+                trackerData.tasks[index].status = 'Not Started';
+            } else {
+                trackerData.tasks[index].status = 'In Progress';
+            }
+            
+            localStorage.setItem('joselito_yearly_tracker', JSON.stringify(trackerData));
+            updateStats();
+        }
+
+        function addTask() {
+            trackerData.tasks.push({ task: "New Task Description", category: "General", status: "Not Started", progress: 0, startDate: getFormattedDate(), dueDate: "TBD", remarks: "Pending..." });
+            saveAndRender();
+        }
+
+        function deleteTask(index) {
+            trackerData.tasks.splice(index, 1);
+            saveAndRender();
+        }
+
+        function resetData() {
+            if (confirm("Reset to default view?")) {
+                trackerData = {
+                    tasks: defaultTasks
+                };
+                saveAndRender();
+            }
+        }
+
+        function generateReport(type) {
+            const tasks = trackerData.tasks;
+            const completedCount = tasks.filter(t => t.status === 'Completed').length;
+            const inProgressCount = tasks.filter(t => t.status === 'In Progress').length;
+            const notStartedCount = tasks.filter(t => t.status === 'Not Started').length;
+            
+            let totalProgressSum = tasks.reduce((acc, t) => acc + Number(t.progress || 0), 0);
+            const overallRate = tasks.length > 0 ? Math.round(totalProgressSum / tasks.length) : 0;
+
+            let titleType = "";
+            let report = "";
+
+            if (type === 'weekly') {
+                titleType = "Weekly Progress Report";
+                report = `Hi Jean,\n\nHi Kristine,\n\nSharing my weekly progress and tasks status update across AIG for this week:\n\n`;
+            } else if (type === 'monthly') {
+                titleType = "Monthly Progress Report";
+                report = `Hi Jean,\n\nHi Kristine,\n\nSharing my monthly summary report of activities and accomplishments across AIG:\n\n`;
+            } else {
+                titleType = "Yearly Master Summary Report";
+                report = `Hi Jean,\n\nHi Kristine,\n\nSharing my comprehensive yearly master summary report of all tasks and accomplishments across AIG:\n\n`;
+            }
+
+            report += `📊 SUMMARY (${titleType.toUpperCase()}):\n`;
+            report += `• Total Tasks Logged: ${tasks.length}\n`;
+            report += `• Completed: ${completedCount} | In Progress: ${inProgressCount} | Not Started: ${notStartedCount}\n`;
+            report += `• Overall Progress Rate: ${overallRate}%\n\n`;
+            report += `📝 TASK LOG BREAKDOWN:\n`;
+
+            tasks.forEach((t, i) => {
+                report += `${i + 1}. [${t.status} - ${t.progress}%] ${t.task} (${t.category})\n`;
+                report += `   • Start: ${t.startDate} | Due: ${t.dueDate}\n`;
+                report += `   • Remarks/Blockers: ${t.remarks}\n\n`;
+            });
+
+            if (type === 'weekly') {
+                report += `Please let me know if anything needs to be escalated or expedited.\n\n`;
+            }
+
+            report += `Best regards,\nJoselito Nolasco`;
+
+            navigator.clipboard.writeText(report).then(() => {
+                showToast(`${titleType} copied to clipboard! Ready to paste into your email.`);
+            }).catch(err => {
+                const textarea = document.createElement('textarea');
+                textarea.value = report;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast(`${titleType} copied to clipboard!`);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = ""; }, 3500);
+        }
+
+        renderTable();
+        updateStats();
+    </script>
+</body>
+</html>
